@@ -6,6 +6,9 @@ import AddLicense from './components/AddLicense.jsx';
 import License from './components/License.jsx';
 import LicenseList from './components/LicenseList.jsx';
 import LicenseMap from './components/LicenseMap.jsx';
+import FeeAdjustment from './components/FeeAdjustment.jsx';
+import LicenseComparison from './components/LicenseComparison.jsx';
+import AdminPanel from './components/AdminPanel.jsx';
 
 function App() {
   return (
@@ -30,6 +33,11 @@ function App() {
               Map & Reports
             </Link>
           </li>
+          <li className="nav-item">
+            <Link to={"/admin"} className="nav-link">
+              Admin Tools
+            </Link>
+          </li>
         </div>
       </nav>
 
@@ -40,6 +48,7 @@ function App() {
           <Route path="/add" element={<AddLicense />} />
           <Route path="/licenses/:id" element={<License />} />
           <Route path="/map" element={<LicenseMap />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </div>
     </Router>

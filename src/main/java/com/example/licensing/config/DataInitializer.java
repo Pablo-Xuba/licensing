@@ -18,7 +18,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Only initialize if database is empty
+        // it will only initialize if database is empty
         if (licenseRepository.count() > 0) {
             System.out.println("Database already contains data. Skipping initialization.");
             return;
@@ -26,7 +26,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("Initializing database with sample license data...");
 
-        // Sample CTL Licenses with Zimbabwe coordinates
+        // CTL Licenses 
         createLicense(
             "Econet Wireless Zimbabwe",
             LicenseType.CTL,

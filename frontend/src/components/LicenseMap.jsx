@@ -34,6 +34,7 @@ const prslIcon = new L.Icon({
 const LicenseMap = () => {
     const [licenses, setLicenses] = useState([]);
     const [selectedLicense, setSelectedLicense] = useState(null);
+    const [reportLoading, setReportLoading] = useState(false);
 
     useEffect(() => {
         retrieveLicenses();
@@ -53,9 +54,24 @@ const LicenseMap = () => {
             });
     };
 
-    const downloadReport = (format) => {
-        const url = `http://localhost:8081/api/reports/${format}`;
-        window.open(url, '_blank');
+    const downloadReport = async (format) => {
+        setReportLoading(true);
+        try {
+            const blob = await licenseService.generateReport(format);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `licenses-report-${new Date().toISOString().split('T')[0]}.${format}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading report:', error);
+            alert('Error downloading report. Please check your permissions.');
+        } finally {
+            setReportLoading(false);
+        }
     };
 
     return (
@@ -67,21 +83,24 @@ const LicenseMap = () => {
                     className="btn btn-danger" 
                     onClick={() => downloadReport('pdf')}
                     style={{ marginRight: '10px' }}
+                    disabled={reportLoading}
                 >
-                    📄 Download PDF Report
+                    {reportLoading ? '⏳ Generating...' : '📄 Download PDF Report'}
                 </button>
                 <button 
                     className="btn btn-success" 
                     onClick={() => downloadReport('excel')}
                     style={{ marginRight: '10px' }}
+                    disabled={reportLoading}
                 >
-                    📊 Download Excel Report
+                    {reportLoading ? '⏳ Generating...' : '📊 Download Excel Report'}
                 </button>
                 <button 
                     className="btn btn-primary" 
                     onClick={() => downloadReport('csv')}
+                    disabled={reportLoading}
                 >
-                    📋 Download CSV Report
+                    {reportLoading ? '⏳ Generating...' : '📋 Download CSV Report'}
                 </button>
             </div>
 

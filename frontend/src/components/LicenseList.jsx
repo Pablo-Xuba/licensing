@@ -13,8 +13,20 @@ const LicenseList = () => {
     const loadLicenses = () => {
         licenseService.getAll()
             .then(response => {
-                setLicenses(response.data);
-                setLoading(false);
+                const licensesWithExpiry = response.data.map(async (license) => {
+                    try {
+                        const yearsToExpiry = await licenseService.getYearsBeforeExpiry(license.id);
+                        return { ...license, yearsBeforeExpiry: yearsToExpiry };
+                    } catch (error) {
+                        console.error(`Error getting expiry for license ${license.id}:`, error);
+                        return { ...license, yearsBeforeExpiry: null };
+                    }
+                });
+                
+                Promise.all(licensesWithExpiry).then(licensesWithExpiryData => {
+                    setLicenses(licensesWithExpiryData);
+                    setLoading(false);
+                });
             })
             .catch(e => {
                 console.error('Error loading licenses:', e);
@@ -44,6 +56,7 @@ const LicenseList = () => {
                             <th>Validity Period</th>
                             <th>Application Fee</th>
                             <th>License Fee</th>
+                            <th>Years to Expiry</th>
                             <th>GPS Location</th>
                             <th>Actions</th>
                         </tr>
@@ -51,7 +64,7 @@ const LicenseList = () => {
                     <tbody>
                         {licenses.length === 0 ? (
                             <tr>
-                                <td colSpan="9" style={{ textAlign: 'center', padding: '2rem' }}>
+                                <td colSpan="10" style={{ textAlign: 'center', padding: '2rem' }}>
                                     No licenses found. Click "Add New License" to get started.
                                 </td>
                             </tr>
@@ -99,6 +112,23 @@ const LicenseList = () => {
                                         <td>{getValidityPeriod()}</td>
                                         <td>${getApplicationFee()}</td>
                                         <td>${getLicenseFee()}</td>
+                                        <td>
+                                            <span style={{
+                                                padding: '0.25rem 0.5rem',
+                                                borderRadius: '8px',
+                                                fontSize: '0.85rem',
+                                                fontWeight: '500',
+                                                backgroundColor: license.yearsBeforeExpiry ? 
+                                                    (license.yearsBeforeExpiry <= 1 ? '#ffebee' : '#e8f5e8') : '#f5f5f5',
+                                                color: license.yearsBeforeExpiry ? 
+                                                    (license.yearsBeforeExpiry <= 1 ? '#c62828' : '#2e7d32') : '#666'
+                                            }}>
+                                                {license.yearsBeforeExpiry !== undefined ? 
+                                                    `${license.yearsBeforeExpiry} years` : 
+                                                    'Calculating...'
+                                                }
+                                            </span>
+                                        </td>
                                         <td>{getGpsLocation()}</td>
                                         <td>
                                             <Link to={`/licenses/${license.id}`} className="btn btn-primary">
