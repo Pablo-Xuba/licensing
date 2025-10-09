@@ -2,23 +2,23 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8081/api/licenses';
 
-const getAll = () => {
+const getAll = () => {//calls the getAll method from the backend
     return axios.get(API_URL);
 };
 
-const get = id => {
+const get = id => {//calls the get method from the backend
     return axios.get(`${API_URL}/${id}`);
 };
 
-const create = data => {
+const create = data => {//calls POST method from the backend
     return axios.post(API_URL, data);
 };
 
-const update = (id, data) => {
+const update = (id, data) => {//calls PUT method from the backend
     return axios.put(`${API_URL}/${id}`, data);
 };
 
-const remove = id => {
+const remove = id => {//calls DELETE method from the backend
     return axios.delete(`${API_URL}/${id}`);
 };
 
@@ -28,17 +28,17 @@ const getAllLicenses = async () => {
     return response.data;
 };
 
-const adjustApplicationFee = async (id, percentage) => {
+const adjustApplicationFee = async (id, percentage) => {//allows the user to adjust the application fee
     const response = await axios.post(`${API_URL}/${id}/adjust-fee?percentage=${percentage}`, {}, {
         auth: {
-            username: 'taku',
+            username: 'taku',//admin user
             password: 'password'
         }
     });
     return response.data;
 };
 
-const compareLicenses = async (id1, id2) => {
+const compareLicenses = async (id1, id2) => {//allows the user to compare two licenses
     const response = await axios.get(`${API_URL}/equals?a=${id1}&b=${id2}`, {
         auth: {
             username: 'taku',
@@ -48,12 +48,12 @@ const compareLicenses = async (id1, id2) => {
     return response.data;
 };
 
-const getYearsBeforeExpiry = async (id) => {
+const getYearsBeforeExpiry = async (id) => {//allows the user to get the years before expiry
     const response = await axios.get(`${API_URL}/${id}/years-before-expiry`);
     return response.data;
 };
 
-const generateReport = async (format) => {
+const generateReport = async (format) => {//allows the user to generate a report 
     const response = await axios.get(`http://localhost:8081/api/reports/${format}`, {
         auth: {
             username: 'taku',
@@ -61,10 +61,10 @@ const generateReport = async (format) => {
         },
         responseType: 'blob'
     });
-    return response.data;
+    return response.data;//returns the report
 };
 
-const licenseService = {
+const licenseService = {//object imported and used to fetch and manipulate the license data
     getAll,
     get,
     create,

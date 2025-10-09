@@ -21,7 +21,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    @Bean //creating users for access rights
     public UserDetailsService userDetailsService() {
         UserDetails taku = User.builder()
             .username("taku")
@@ -47,11 +47,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/licenses", "/api/licenses/*/years-before-expiry", 
                                "/api/reports/**").permitAll()
                 
-                // Manager and Admin - fee adjustments, license comparison, create, update, delete
+                // Manager and Admin can : fee adjustments, license comparison, create, update, delete
                 .requestMatchers("/api/licenses/*/adjust-fee", "/api/licenses/equals", "/api/licenses", "/api/licenses/*")
                 .hasAnyRole("ADMIN", "MANAGER")
                 
-                // All authenticated users can view
+                // All the users can view
                 .anyRequest().authenticated()
             )
             .httpBasic(httpBasic -> httpBasic.realmName("Licensing System"));

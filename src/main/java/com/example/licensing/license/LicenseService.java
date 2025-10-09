@@ -1,3 +1,4 @@
+//backend service and business logic
 package com.example.licensing.license;
 
 import org.springframework.stereotype.Service;
@@ -9,18 +10,22 @@ import java.util.List;
 @Service
 @Transactional
 public class LicenseService {
+    // The repository that handles database operations for licenses
     private final LicenseRepository repository;
 
+    // Constructor injects the liicense repository dependency
     public LicenseService(LicenseRepository repository) {
         this.repository = repository;
     }
 
     public List<License> all() {return repository.findAll();}
 
+    // Get a single license by its ID
     public License get(Long id) {return repository.findById(id).orElseThrow();}
 
     public License create(License l) {return repository.save(l);}
 
+    // Update an existing license with new data
     public License update(Long id, License updated) {
         License existing = get(id);
         existing.setType(updated.getType());
@@ -34,12 +39,14 @@ public class LicenseService {
         existing.setAnnualUniversalServiceContribution(updated.getAnnualUniversalServiceContribution());
         existing.setLatitude(updated.getLatitude());
         existing.setLongitude(updated.getLongitude());
-        return existing;
+        return existing;//this returns the updated license
     }
 
-    public void delete(Long id) {repository.deleteById(id);}    
+    
+    public void delete(Long id) {repository.deleteById(id);}// deleting a license by its ID
 
-    public long yearsBeforeExpiry(Long id) {return get(id).yearsBeforeExpiry(LocalDate.now());}
+   
+    public long yearsBeforeExpiry(Long id) {return get(id).yearsBeforeExpiry(LocalDate.now());} // to calculate years before a license expires
 
     public License adjustApplicationFee(Long id, double percentage) {
         License l = get(id);
@@ -47,6 +54,7 @@ public class LicenseService {
         return l;
     }
 
+    // Compare two licenses for equality
     public boolean equals(Long id1, Long id2) {
         return get(id1).equals(get(id2));
     }

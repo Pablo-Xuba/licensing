@@ -1,34 +1,39 @@
 package com.example.licensing.license;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.*;//this is a validation library
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-
+//BACKEND data model storing details about a license
 @Entity
-@Table(name = "licenses")
+@Table(name = "licenses") // Maps this class to the 'licenses' table in the database
 public class License {
+    // Unique ID for each license
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // to see either the type of license: CTL or PRSL
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private LicenseType type;
 
+    // Name of the licensed company
     @NotBlank
     @Column(nullable = false, unique = true)
     private String companyName;
 
+    // Contact email for the company
     @Email
     @NotBlank
     @Column(nullable = false)
     private String email;
 
+    // Date when the license was issued
     @NotNull
     private LocalDate issueDate;
 
@@ -48,10 +53,11 @@ public class License {
     @Digits(integer = 15, fraction = 2)
     private BigDecimal annualUniversalServiceContribution; // CTL only
 
+    // GPS coordinates for the company location
     private Double latitude;
     private Double longitude;
 
-    public License() { /* JPA requires a no-arg constructor */ }
+    public License() { /* JPA requires a noargument constructor */ }
 
     // Getters & Setters
     public Long getId() {return id;}
@@ -79,13 +85,15 @@ public class License {
     public Double getLongitude() {return longitude;}
     public void setLongitude(Double longitude) {this.longitude = longitude;}
 
-    public long yearsBeforeExpiry(LocalDate asOf) {
+    
+    public long yearsBeforeExpiry(LocalDate asOf) {// to clculate how many years before this license expires
         LocalDate expiry = getExpiryDate();
         if (asOf.isAfter(expiry)) return 0;
         return ChronoUnit.YEARS.between(asOf, expiry);
     }
 
-    public LocalDate getExpiryDate() {
+    
+    public LocalDate getExpiryDate() {//getting the expiry date for this license 
         int years;
         if (type == LicenseType.CTL) {
             years = 15;
@@ -95,6 +103,7 @@ public class License {
         return issueDate.plusYears(years);
     }
 
+    // Adjust the application fee by a percentage
     public void adjustApplicationFee(double percentage) {
         if (applicationFee == null) return;
         BigDecimal factor = BigDecimal.valueOf(1 + (percentage / 100d));

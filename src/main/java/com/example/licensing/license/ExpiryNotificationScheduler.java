@@ -23,7 +23,7 @@ public class ExpiryNotificationScheduler {
         this.mailSender = mailSender;
     }
 
-    // Runs daily at 08:00
+    // Runs daily at 8 oclock
     @Scheduled(cron = "0 0 8 * * *")
     public void notifyExpiring() {
         LocalDate now = LocalDate.now();
