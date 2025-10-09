@@ -11,7 +11,7 @@ Simple REST backend for managing two license types: CTL (Cellular Telecommunicat
 - CORS open by default (adjust for production)
 
 ## Tech Stack
-- Java 17 / Spring Boot
+- Java 25 / Spring Boot
 - Spring Web, Data JPA, Validation
 - MySQL (switchable)(Xampp local)
 - Spring Mail (notification)
