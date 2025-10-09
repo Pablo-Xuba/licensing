@@ -13,7 +13,7 @@ Simple REST backend for managing two license types: CTL (Cellular Telecommunicat
 ## Tech Stack
 - Java 17 / Spring Boot
 - Spring Web, Data JPA, Validation
-- MySQL (switchable) + Hibernate
+- MySQL (switchable)(Xampp local)
 - Spring Mail (notification)
 
 ## Database Setup (MySQL)
