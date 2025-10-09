@@ -9,8 +9,13 @@ import LicenseMap from './components/LicenseMap.jsx';
 import FeeAdjustment from './components/FeeAdjustment.jsx';
 import LicenseComparison from './components/LicenseComparison.jsx';
 import AdminPanel from './components/AdminPanel.jsx';
+import LoginForm from './components/LoginForm.jsx';
+import { AuthProvider, useAuth } from './contexts/AuthContext.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 
-function App() {
+function AppContent() {
+  const { isAuthenticated, user, logout } = useAuth();
+
   return (
     <Router>
       <nav className="navbar">
@@ -38,20 +43,67 @@ function App() {
               Admin Tools
             </Link>
           </li>
+          {isAuthenticated && (
+            <li className="nav-item dropdown">
+              <span className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                {user?.username} ({user?.roles?.join(', ')})
+              </span>
+              <ul className="dropdown-menu">
+                <li>
+                  <button className="dropdown-item" onClick={logout}>
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </li>
+          )}
         </div>
       </nav>
 
       <div className="container">
         <Routes>
-          <Route path="/" element={<LicenseList />} />
-          <Route path="/licenses" element={<LicenseList />} />
-          <Route path="/add" element={<AddLicense />} />
-          <Route path="/licenses/:id" element={<License />} />
-          <Route path="/map" element={<LicenseMap />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={
+            <ProtectedRoute>
+              <LicenseList />
+            </ProtectedRoute>
+          } />
+          <Route path="/licenses" element={
+            <ProtectedRoute>
+              <LicenseList />
+            </ProtectedRoute>
+          } />
+          <Route path="/add" element={
+            <ProtectedRoute requiredRoles={['ADMIN', 'MANAGER']}>
+              <AddLicense />
+            </ProtectedRoute>
+          } />
+          <Route path="/licenses/:id" element={
+            <ProtectedRoute>
+              <License />
+            </ProtectedRoute>
+          } />
+          <Route path="/map" element={
+            <ProtectedRoute>
+              <LicenseMap />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin" element={
+            <ProtectedRoute requiredRoles={['ADMIN', 'MANAGER']}>
+              <AdminPanel />
+            </ProtectedRoute>
+          } />
         </Routes>
       </div>
     </Router>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

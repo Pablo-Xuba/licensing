@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FeeAdjustment from './FeeAdjustment';
 import LicenseComparison from './LicenseComparison';
+import ExpiryCalculator from './ExpiryCalculator';
 import licenseService from '../services/licenseService';
 
 const AdminPanel = () => {
@@ -56,6 +57,14 @@ const AdminPanel = () => {
                                 License Comparison
                             </button>
                         </li>
+                        <li className="nav-item">
+                            <button 
+                                className={`nav-link ${activeTab === 'expiry-calculator' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('expiry-calculator')}
+                            >
+                                Expiry Calculator
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -102,6 +111,10 @@ const AdminPanel = () => {
                     {activeTab === 'license-comparison' && (
                         <LicenseComparison />
                     )}
+
+                    {activeTab === 'expiry-calculator' && (
+                        <ExpiryCalculator />
+                    )}
                 </div>
             </div>
 
@@ -109,14 +122,8 @@ const AdminPanel = () => {
                 <div className="col-12">
                     <div className="alert alert-info">
                         <h5>Access Control Information</h5>
-                        <p><strong>Admin Users (taku):</strong> Can adjust fees, compare licenses, generate reports, and manage all licenses</p>
-                        <p><strong>Guest Users (guest):</strong> Can view licenses and generate reports</p>
-                        <hr />
-                        <p><strong>User Credentials:</strong></p>
-                        <ul>
-                            <li>Admin: <code>taku / password</code></li>
-                            <li>Guest: <code>guest / guest</code></li>
-                        </ul>
+                        <p><strong>Admin Users:</strong> Can adjust fees, compare licenses, generate reports, and manage all licenses</p>
+                        <p><strong>Guest Users:</strong> Can view licenses and generate reports</p>
                     </div>
                 </div>
             </div>
