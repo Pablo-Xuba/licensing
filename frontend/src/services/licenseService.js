@@ -2,63 +2,65 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8081/api/licenses';
 
-const getAll = () => {//calls the getAll method from the backend
-    return axios.get(API_URL);
+// Helper function to get auth headers from localStorage
+const getAuthHeaders = () => {
+    const credentials = localStorage.getItem('authCredentials');
+    if (credentials) {
+        const { username, password } = JSON.parse(credentials);
+        return {
+            auth: {
+                username: username,
+                password: password
+            }
+        };
+    }
+    return {};
 };
 
-const get = id => {//calls the get method from the backend
-    return axios.get(`${API_URL}/${id}`);
+const getAll = () => {
+    return axios.get(API_URL, getAuthHeaders());
 };
 
-const create = data => {//calls POST method from the backend
-    return axios.post(API_URL, data);
+const get = id => {
+    return axios.get(`${API_URL}/${id}`, getAuthHeaders());
 };
 
-const update = (id, data) => {//calls PUT method from the backend
-    return axios.put(`${API_URL}/${id}`, data);
+const create = data => {
+    return axios.post(API_URL, data, getAuthHeaders());
 };
 
-const remove = id => {//calls DELETE method from the backend
-    return axios.delete(`${API_URL}/${id}`);
+const update = (id, data) => {
+    return axios.put(`${API_URL}/${id}`, data, getAuthHeaders());
+};
+
+const remove = id => {
+    return axios.delete(`${API_URL}/${id}`, getAuthHeaders());
 };
 
 // Additional methods for new functionality
 const getAllLicenses = async () => {
-    const response = await axios.get(API_URL);
+    const response = await axios.get(API_URL, getAuthHeaders());
     return response.data;
 };
 
-const adjustApplicationFee = async (id, percentage) => {//allows the user to adjust the application fee
-    const response = await axios.post(`${API_URL}/${id}/adjust-fee?percentage=${percentage}`, {}, {
-        auth: {
-            username: 'taku',//admin user
-            password: 'password'
-        }
-    });
+const adjustApplicationFee = async (id, percentage) => {
+    const response = await axios.post(`${API_URL}/${id}/adjust-fee?percentage=${percentage}`, {}, getAuthHeaders());
     return response.data;
 };
 
-const compareLicenses = async (id1, id2) => {//allows the user to compare two licenses
-    const response = await axios.get(`${API_URL}/equals?a=${id1}&b=${id2}`, {
-        auth: {
-            username: 'taku',
-            password: 'password'
-        }
-    });
+const compareLicenses = async (id1, id2) => {
+    const response = await axios.get(`${API_URL}/equals?a=${id1}&b=${id2}`, getAuthHeaders());
     return response.data;
 };
 
-const getYearsBeforeExpiry = async (id) => {//allows the user to get the years before expiry
-    const response = await axios.get(`${API_URL}/${id}/years-before-expiry`);
+const getYearsBeforeExpiry = async (id) => {
+    const response = await axios.get(`${API_URL}/${id}/years-before-expiry`, getAuthHeaders());
     return response.data;
 };
 
 const generateReport = async (format) => {//allows the user to generate a report 
     const response = await axios.get(`http://localhost:8081/api/reports/${format}`, {
-        auth: {
-            username: 'taku',
-            password: 'password'
-        },
+        ...getAuthHeaders(),
         responseType: 'blob'
     });
     return response.data;//returns the report

@@ -35,7 +35,31 @@ public class SecurityConfig {
                 .roles("VIEWER")
                 .build();
 
-        return new InMemoryUserDetailsManager(taku, guest);
+        UserDetails briel = User.builder()
+                .username("briel")
+                .password(passwordEncoder().encode("password"))
+                .roles("ADMIN", "MANAGER")
+                .build();
+
+        UserDetails ethel = User.builder()
+                .username("ethel")
+                .password(passwordEncoder().encode("password"))
+                .roles("ADMIN", "MANAGER")
+                .build();
+
+        UserDetails charity = User.builder()
+                .username("charity")
+                .password(passwordEncoder().encode("password"))
+                .roles("ADMIN", "MANAGER")
+                .build();
+
+        UserDetails leon = User.builder()
+                .username("leon")
+                .password(passwordEncoder().encode("password"))
+                .roles("ADMIN", "MANAGER")
+                .build();
+
+        return new InMemoryUserDetailsManager(taku, guest, briel, ethel, charity, leon);
     }
 
     @Bean
@@ -47,7 +71,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/licenses", "/api/licenses/*/years-before-expiry", 
                                "/api/reports/**").permitAll()
                 
-                // Manager and Admin can : fee adjustments, license comparison, create, update, delete
+                // User info endpoint
+                .requestMatchers("/api/user/current").authenticated()
+                
+                // Manager and Admin - fee adjustments, license comparison, create, update, delete
                 .requestMatchers("/api/licenses/*/adjust-fee", "/api/licenses/equals", "/api/licenses", "/api/licenses/*")
                 .hasAnyRole("ADMIN", "MANAGER")
                 
